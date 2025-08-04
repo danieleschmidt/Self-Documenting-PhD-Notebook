@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://python.org)
 [![Obsidian](https://img.shields.io/badge/Obsidian-Compatible-purple.svg)](https://obsidian.md)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Medium](https://img.shields.io/badge/Blog-Medium-black.svg)](https://medium.com/@yourusername)
+[![Medium](https://img.shields.io/badge/Blog-Medium-black.svg)](https://medium.com/@danieleschmidt)
 
 An Obsidian-compatible research notebook that automatically ingests lab data, discussion threads, and LaTeX notes, then generates arXiv-ready drafts using agentic SPARC pipelines.
 
@@ -31,7 +31,7 @@ sdpn install-obsidian-plugin
 sdpn init "My PhD Research"
 
 # Development installation
-git clone https://github.com/yourusername/Self-Documenting-PhD-Notebook.git
+git clone https://github.com/danieleschmidt/Self-Documenting-PhD-Notebook.git
 cd Self-Documenting-PhD-Notebook
 pip install -e ".[all]"
 ```
@@ -885,7 +885,7 @@ backup = BackupManager(notebook)
 # Configure multi-location backup
 backup.configure({
     'git': {
-        'remote': 'github.com/yourusername/phd-research.git',
+        'remote': 'github.com/danieleschmidt/phd-research.git',
         'branch': 'main',
         'auto_commit': True,
         'commit_message_generator': 'semantic'
