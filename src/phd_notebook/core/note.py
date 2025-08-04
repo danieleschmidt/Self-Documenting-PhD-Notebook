@@ -25,7 +25,7 @@ class NoteType(str, Enum):
     OBSERVATION = "observation"
 
 
-@dataclass
+@dataclass(frozen=True)
 class Link:
     """Represents a link between notes."""
     target: str
@@ -227,12 +227,19 @@ class Note:
     def to_markdown(self) -> str:
         """Convert note to Obsidian-compatible markdown format."""
         # Prepare frontmatter
-        frontmatter_dict = self.frontmatter.model_dump()
+        try:
+            # Try pydantic v2 method first
+            frontmatter_dict = self.frontmatter.model_dump()
+        except AttributeError:
+            # Fall back to pydantic v1 method
+            frontmatter_dict = self.frontmatter.dict()
         
-        # Convert datetime objects to strings
+        # Convert datetime objects to strings and enums to values
         for key, value in frontmatter_dict.items():
             if isinstance(value, datetime):
                 frontmatter_dict[key] = value.isoformat()
+            elif hasattr(value, 'value'):  # Handle enums
+                frontmatter_dict[key] = value.value
         
         # Build markdown content
         frontmatter_yaml = yaml.dump(frontmatter_dict, default_flow_style=False)

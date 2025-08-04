@@ -70,7 +70,7 @@ class KnowledgeGraph:
         node = GraphNode(
             id=node_id,
             title=note.title,
-            node_type=note.note_type.value,
+            node_type=note.note_type.value if hasattr(note.note_type, 'value') else str(note.note_type),
             tags=note.frontmatter.tags,
             metadata={
                 "created": note.frontmatter.created,
