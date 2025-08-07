@@ -59,9 +59,9 @@ def init(name: str, path: str, author: str, institution: str, field: str, subfie
 @click.argument('title')
 @click.option('--type', '-t', type=click.Choice([t.value for t in NoteType]),
               default='idea', help='Type of note')
-@click.option('--tags', '-T', multiple=True, help='Tags for the note')
+@click.option('--tags', '-T', help='Tags for the note (comma-separated)')
 @click.option('--template', help='Template to use')
-def create(vault: str, title: str, type: str, tags: tuple, template: str):
+def create(vault: str, title: str, type: str, tags: str, template: str):
     """Create a new research note."""
     vault_path = Path(vault).expanduser()
     
@@ -73,10 +73,14 @@ def create(vault: str, title: str, type: str, tags: tuple, template: str):
     try:
         notebook = ResearchNotebook(vault_path=vault_path)
         
+        tag_list = []
+        if tags:
+            tag_list = [tag.strip() for tag in tags.split(',')]
+        
         note = notebook.create_note(
             title=title,
             note_type=NoteType(type),
-            tags=list(tags),
+            tags=tag_list,
             template=template
         )
         
