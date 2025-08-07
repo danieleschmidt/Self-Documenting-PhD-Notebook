@@ -107,7 +107,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "sdpn=phd_notebook.cli:main",
+            "sdpn=phd_notebook.cli.main:main",
         ],
     },
     include_package_data=True,
