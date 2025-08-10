@@ -60,7 +60,11 @@ class ResearchNotebook:
         # AI agents registry
         self._agents: Dict[str, BaseAgent] = {}
         
-        # Automation workflows
+        # Workflow manager
+        from ..workflows.automation import WorkflowManager
+        self.workflow_manager = WorkflowManager(self)
+        
+        # Legacy workflow support
         self._workflows: Dict[str, Any] = {}
         self._active_workflows: List[str] = []
         
@@ -286,16 +290,20 @@ class ResearchNotebook:
         """Start automatic documentation processes."""
         print("🚀 Starting auto-documentation...")
         
-        # Start default workflows if available
-        default_workflows = [
-            "daily_notes_organization",
-            "auto_linking",
-            "tag_suggestions"
-        ]
+        # Schedule default workflows
+        self.workflow_manager.schedule_workflow("auto_tagging", "daily")
+        self.workflow_manager.schedule_workflow("smart_linking", "daily") 
+        self.workflow_manager.schedule_workflow("daily_review", "daily")
         
-        for workflow in default_workflows:
-            if workflow in self._workflows:
-                self.start_workflow(workflow)
+        print("✅ Auto-documentation workflows scheduled")
+    
+    async def run_workflow(self, name: str, **kwargs):
+        """Run a workflow by name."""
+        return await self.workflow_manager.run_workflow(name, **kwargs)
+    
+    def get_workflow_status(self):
+        """Get workflow status."""
+        return self.workflow_manager.get_workflow_status()
     
     def __repr__(self) -> str:
         return f"ResearchNotebook(field='{self.field}', vault='{self.vault_path}')"

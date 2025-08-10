@@ -125,10 +125,12 @@ class TestNote:
         note.update_content("Updated content")
         note.create_version("updated")
         
-        assert len(note._versions) == 2
+        # Should have 3 versions: initial, content_update (auto), and updated
+        assert len(note._versions) == 3
         assert note._versions[0]["label"] == "initial"
         assert note._versions[0]["content"] == "Original content"
-        assert note._versions[1]["label"] == "updated"
+        assert note._versions[1]["label"] == "content_update"  # Auto-created by update_content
+        assert note._versions[2]["label"] == "updated"
         assert note.content == "Updated content"
     
     def test_to_markdown(self):
