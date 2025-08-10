@@ -101,3 +101,18 @@ class ExportError(PhDNotebookError):
 class KnowledgeGraphError(PhDNotebookError):
     """Raised when knowledge graph operations fail."""
     pass
+
+
+class ConfigError(PhDNotebookError):
+    """Raised when configuration operations fail."""
+    pass
+
+
+class MetricsError(PhDNotebookError):
+    """Raised when metrics collection fails."""
+    pass
+
+
+class BackupError(PhDNotebookError):
+    """Raised when backup operations fail."""
+    pass

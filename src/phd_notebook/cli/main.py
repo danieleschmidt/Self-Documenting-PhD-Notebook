@@ -271,6 +271,39 @@ def experiment(vault: str, title: str, hypothesis: str):
 @main.command()
 @click.option('--vault', '-v', default='~/Documents/PhD_Research',
               help='Path to the research vault')
+@click.option('--workflow', '-w', help='Specific workflow to run')
+def workflow(vault: str, workflow: str):
+    """Run automation workflows."""
+    vault_path = Path(vault).expanduser()
+    
+    if not vault_path.exists():
+        rprint(f"❌ [red]Vault not found at {vault_path}[/red]")
+        return
+    
+    try:
+        notebook = ResearchNotebook(vault_path=vault_path)
+        
+        if workflow:
+            # Run specific workflow
+            import asyncio
+            result = asyncio.run(notebook.run_workflow(workflow))
+            rprint(f"✅ [green]Workflow '{workflow}' completed[/green]")
+            rprint(f"📊 Result: {result}")
+        else:
+            # Show workflow status
+            status = notebook.get_workflow_status()
+            rprint("⚙️ [bold]Workflow Status[/bold]")
+            rprint(f"📋 Registered: {', '.join(status['registered'])}")
+            rprint(f"⏰ Scheduled: {', '.join(status['scheduled'])}")
+            rprint(f"📊 Total: {status['total_workflows']} workflows")
+    
+    except Exception as e:
+        rprint(f"❌ [red]Workflow error: {e}[/red]")
+
+
+@main.command()
+@click.option('--vault', '-v', default='~/Documents/PhD_Research',
+              help='Path to the research vault')
 def graph(vault: str):
     """Show knowledge graph information."""
     vault_path = Path(vault).expanduser()

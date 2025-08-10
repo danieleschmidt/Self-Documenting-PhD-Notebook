@@ -93,8 +93,8 @@ class InputSanitizer:
         if not filename:
             raise SecurityError("Filename cannot be empty")
         
-        # Remove or replace dangerous characters
-        safe_filename = re.sub(r'[<>:"|?*\\]', '', filename)
+        # Remove or replace dangerous characters including path separators
+        safe_filename = re.sub(r'[<>:"|?*\\/]', '', filename)
         safe_filename = re.sub(r'\.\.+', '.', safe_filename)  # Prevent path traversal
         safe_filename = safe_filename.strip('. ')  # Remove leading/trailing dots and spaces
         
@@ -111,7 +111,9 @@ class InputSanitizer:
             'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9'
         }
         
-        if safe_filename.upper() in reserved_names:
+        # Check filename without extension
+        filename_without_ext = safe_filename.split('.')[0].upper()
+        if filename_without_ext in reserved_names:
             safe_filename = f"safe_{safe_filename}"
         
         return safe_filename
@@ -273,15 +275,11 @@ class AccessController:
         """Anonymize sensitive content."""
         anonymized = content
         
-        for pattern in self.sensitive_patterns:
-            if pattern == r'\b\d{3}-\d{2}-\d{4}\b':  # SSN
-                anonymized = re.sub(pattern, 'XXX-XX-XXXX', anonymized)
-            elif pattern == r'\b\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{4}\b':  # Credit card
-                anonymized = re.sub(pattern, 'XXXX-XXXX-XXXX-XXXX', anonymized)
-            elif r'@' in pattern:  # Email
-                anonymized = re.sub(pattern, 'user@example.com', anonymized)
-            elif r'\d{3}[- ]?\d{3}[- ]?\d{4}' in pattern:  # Phone
-                anonymized = re.sub(pattern, 'XXX-XXX-XXXX', anonymized)
+        # Apply patterns in correct order (more specific first)
+        anonymized = re.sub(r'\b\d{3}-\d{2}-\d{4}\b', 'XXX-XX-XXXX', anonymized)  # SSN
+        anonymized = re.sub(r'\b\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{4}\b', 'XXXX-XXXX-XXXX-XXXX', anonymized)  # Credit card
+        anonymized = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', 'user@example.com', anonymized)  # Email
+        anonymized = re.sub(r'\b\d{3}[- ]?\d{3}[- ]?\d{4}\b', 'XXX-XXX-XXXX', anonymized)  # Phone
         
         return anonymized
     

@@ -12,16 +12,24 @@ except ImportError:
     __version__ = "unknown"
 
 from .core.notebook import ResearchNotebook
-from .core.note import Note
+from .core.note import Note, NoteType
 from .core.vault_manager import VaultManager
 from .connectors.base import DataConnector
+from .agents.smart_agent import SmartAgent, LiteratureAgent
+from .workflows.automation import WorkflowManager
+from .ai.client_factory import AIClientFactory
 
 __all__ = [
     "__version__",
     "ResearchNotebook", 
     "Note",
+    "NoteType",
     "VaultManager",
     "DataConnector",
+    "SmartAgent",
+    "LiteratureAgent", 
+    "WorkflowManager",
+    "AIClientFactory",
 ]
 
 # Convenience function for quick setup
