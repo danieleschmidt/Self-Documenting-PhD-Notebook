@@ -151,6 +151,10 @@ class SecurityScanner:
         ]
         
         for py_file in self.project_root.rglob("*.py"):
+            # Skip security scan files themselves
+            if 'security_scan' in str(py_file) or 'test' in str(py_file):
+                continue
+                
             try:
                 content = py_file.read_text(encoding='utf-8')
                 

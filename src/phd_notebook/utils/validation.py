@@ -6,8 +6,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
-from pydantic import BaseModel, ValidationError as PydanticValidationError, validator
-import yaml
+from ..utils.yaml_fallback import safe_load, safe_dump, YAMLError
 
 
 class ValidationError(Exception):
@@ -20,39 +19,34 @@ class ValidationError(Exception):
         super().__init__(self.message)
 
 
-class NoteValidator(BaseModel):
-    """Pydantic model for note validation."""
+class NoteValidator:
+    """Simple note validator without pydantic dependency."""
     
-    title: str
-    content: str = ""
-    tags: List[str] = []
-    note_type: str = "idea"
-    status: str = "draft"
-    priority: int = 3
-    
-    @validator('title')
-    def title_must_be_valid(cls, v):
-        if not v or not v.strip():
-            raise ValueError('Title cannot be empty')
+    @staticmethod
+    def validate_title(title: str) -> str:
+        """Validate note title."""
+        if not title or not title.strip():
+            raise ValidationError('Title cannot be empty', field='title')
         
-        if len(v.strip()) > 200:
-            raise ValueError('Title cannot exceed 200 characters')
+        if len(title.strip()) > 200:
+            raise ValidationError('Title cannot exceed 200 characters', field='title')
         
         # Check for problematic characters
-        if re.search(r'[<>:"|?*\\]', v):
-            raise ValueError('Title contains invalid characters')
+        if re.search(r'[<>:"|?*\\]', title):
+            raise ValidationError('Title contains invalid characters', field='title')
         
-        return v.strip()
+        return title.strip()
     
-    @validator('tags')
-    def tags_must_be_valid(cls, v):
-        if not isinstance(v, list):
-            raise ValueError('Tags must be a list')
+    @staticmethod
+    def validate_tags(tags: List[str]) -> List[str]:
+        """Validate note tags."""
+        if not isinstance(tags, list):
+            raise ValidationError('Tags must be a list', field='tags')
         
         valid_tags = []
-        for tag in v:
+        for tag in tags:
             if not isinstance(tag, str):
-                raise ValueError('All tags must be strings')
+                raise ValidationError('All tags must be strings', field='tags')
             
             # Normalize tag format
             clean_tag = tag.strip()
@@ -60,23 +54,24 @@ class NoteValidator(BaseModel):
                 clean_tag = f"#{clean_tag}"
             
             # Validate tag format
-            if not re.match(r'^#[a-zA-Z0-9_-]+$', clean_tag):
-                raise ValueError(f'Invalid tag format: {clean_tag}')
+            if clean_tag and not re.match(r'^#[a-zA-Z0-9_-]+$', clean_tag):
+                raise ValidationError(f'Invalid tag format: {clean_tag}', field='tags')
             
-            if clean_tag not in valid_tags:
+            if clean_tag and clean_tag not in valid_tags:
                 valid_tags.append(clean_tag)
         
         return valid_tags
     
-    @validator('note_type')
-    def note_type_must_be_valid(cls, v):
+    @staticmethod
+    def validate_note_type(note_type: str) -> str:
+        """Validate note type."""
         valid_types = [
             'experiment', 'literature', 'idea', 'meeting', 
             'project', 'analysis', 'methodology', 'observation'
         ]
-        if v not in valid_types:
-            raise ValueError(f'Note type must be one of: {valid_types}')
-        return v
+        if note_type not in valid_types:
+            raise ValidationError(f'Note type must be one of: {valid_types}', field='note_type')
+        return note_type
     
     @validator('priority')
     def priority_must_be_valid(cls, v):

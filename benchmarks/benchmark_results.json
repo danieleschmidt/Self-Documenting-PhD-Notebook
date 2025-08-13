@@ -1,0 +1,167 @@
+{
+  "knowledge_graph": {
+    "embedding_generation": {
+      "time_per_paper_ms": 0.1019597053527832,
+      "total_time_ms": 10.19597053527832,
+      "papers_processed": 100,
+      "embedding_dimension": 256,
+      "avg_magnitude": 1.542017391194711
+    },
+    "attention_computation": {
+      "time_ms": 0.23794174194335938,
+      "source_targets": 10,
+      "weights_sum": 1.0,
+      "max_weight": 0.11936693841764665
+    },
+    "validation": {
+      "consistent_dimensions": true,
+      "non_zero_embeddings": true,
+      "valid_attention_weights": true
+    }
+  },
+  "literature_synthesis": {
+    "size_10": {
+      "processing_time_ms": 14.456987380981445,
+      "papers_per_second": 691.7070435542655,
+      "clusters_found": 3,
+      "gaps_identified": 3,
+      "synthesis_length": 829,
+      "quality_metrics": {
+        "has_synthesis": true,
+        "has_clusters": true,
+        "has_gaps": true,
+        "reasonable_clusters": true
+      }
+    },
+    "size_25": {
+      "processing_time_ms": 79.27751541137695,
+      "papers_per_second": 315.34792520014196,
+      "clusters_found": 8,
+      "gaps_identified": 10,
+      "synthesis_length": 911,
+      "quality_metrics": {
+        "has_synthesis": true,
+        "has_clusters": true,
+        "has_gaps": true,
+        "reasonable_clusters": true
+      }
+    },
+    "size_50": {
+      "processing_time_ms": 191.62464141845703,
+      "papers_per_second": 260.9267765872206,
+      "clusters_found": 10,
+      "gaps_identified": 10,
+      "synthesis_length": 911,
+      "quality_metrics": {
+        "has_synthesis": true,
+        "has_clusters": true,
+        "has_gaps": true,
+        "reasonable_clusters": true
+      }
+    },
+    "size_100": {
+      "processing_time_ms": 358.6709499359131,
+      "papers_per_second": 278.8070793518903,
+      "clusters_found": 10,
+      "gaps_identified": 10,
+      "synthesis_length": 916,
+      "quality_metrics": {
+        "has_synthesis": true,
+        "has_clusters": true,
+        "has_gaps": true,
+        "reasonable_clusters": true
+      }
+    },
+    "scalability": {
+      "scaling_factor": 2.4809522238897044,
+      "is_linear": false,
+      "performance_degradation": true
+    }
+  },
+  "experimental_design": {
+    "optimization_performance": {
+      "time_ms": 22.379636764526367,
+      "generations": 50,
+      "population_size": 50,
+      "convergence_achieved": true
+    },
+    "solution_quality": {
+      "fitness_score": 0.92345517332066,
+      "constraints_satisfied": true,
+      "has_recommendations": true,
+      "design_completeness": true
+    },
+    "optimal_design": {
+      "sample_size": 28,
+      "duration_weeks": 6,
+      "num_conditions": 2,
+      "measurement_frequency": "monthly",
+      "control_group": true,
+      "blinding": "double",
+      "randomization": "block",
+      "power": 0.9448505777355336,
+      "alpha": 0.001
+    }
+  },
+  "research_planning": {
+    "planning_performance": {
+      "time_ms": 31.10980987548828,
+      "opportunities_evaluated": 50,
+      "pareto_solutions": 20,
+      "optimization_iterations": 1000
+    },
+    "solution_quality": {
+      "plan_size": 1,
+      "total_duration_months": 6,
+      "constraints_satisfied": true,
+      "has_analysis": true,
+      "pareto_front_diversity": 2
+    },
+    "plan_metrics": {
+      "avg_novelty": 0.9086017437931162,
+      "avg_impact": 0.8259134362493172,
+      "avg_feasibility": 0.8312922209505813
+    }
+  },
+  "integration": {
+    "integration_performance": {
+      "total_time_ms": 446.5827941894531,
+      "components_executed": 3,
+      "avg_time_per_component_ms": 148.86093139648438
+    },
+    "workflow_completeness": {
+      "literature_synthesis": true,
+      "experimental_design": true,
+      "research_planning": true,
+      "recommendations": true,
+      "complete_workflow": true
+    },
+    "output_quality": {
+      "recommendations_count": 3,
+      "synthesis_clusters": 10,
+      "identified_gaps": 10,
+      "optimal_plan_size": 1
+    }
+  },
+  "benchmark_summary": {
+    "total_execution_time_ms": 1157.4876308441162,
+    "timestamp": "2025-08-13T03:19:48.703380",
+    "test_data_size": {
+      "papers": 200,
+      "opportunities": 50
+    },
+    "overall_performance": {
+      "overall_score": 64.04202788897697,
+      "performance_ratios": {
+        "kg_embedding_per_paper": 98.07796094937449,
+        "literature_synthesis_100_papers": 13.940353967594517,
+        "experimental_optimization": 89.36695537302779,
+        "research_planning": 96.43260476380246,
+        "integration_workflow": 22.3922643910856
+      },
+      "meets_targets": true,
+      "target_achievements": 5,
+      "total_targets": 5
+    }
+  }
+}

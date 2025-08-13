@@ -18,6 +18,11 @@ class VaultNotFoundError(VaultError):
     pass
 
 
+class ResearchError(PhDNotebookError):
+    """Raised when research operations fail."""
+    pass
+
+
 class VaultCorruptedError(VaultError):
     """Raised when vault structure is corrupted."""
     pass

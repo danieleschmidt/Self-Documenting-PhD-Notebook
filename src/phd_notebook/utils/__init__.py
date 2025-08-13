@@ -1,7 +1,7 @@
 """Utility functions and classes."""
 
 from .logging import setup_logging, get_logger
-from .validation import validate_note_data, ValidationError
+from .simple_validation import validate_note_data, ValidationError
 
 try:
     from .security import sanitize_input, SecurityError
