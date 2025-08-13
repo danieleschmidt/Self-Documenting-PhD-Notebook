@@ -9,8 +9,8 @@ from typing import Dict, List, Optional, Set, Union, Any
 from dataclasses import dataclass, field
 from enum import Enum
 
-import yaml
-from pydantic import BaseModel, Field
+from ..utils.yaml_fallback import safe_load, safe_dump, YAMLError
+from ..utils.simple_validation import validate_note_data, ValidationError
 
 
 class NoteType(str, Enum):
@@ -34,20 +34,21 @@ class Link:
     created_at: datetime = field(default_factory=datetime.now)
 
 
-class NoteFrontmatter(BaseModel):
+@dataclass
+class NoteFrontmatter:
     """Structured frontmatter for research notes."""
     title: str
-    created: datetime = Field(default_factory=datetime.now)
-    updated: datetime = Field(default_factory=datetime.now)
-    tags: List[str] = Field(default_factory=list)
+    created: datetime = field(default_factory=datetime.now)
+    updated: datetime = field(default_factory=datetime.now)
+    tags: List[str] = field(default_factory=list)
     type: NoteType = NoteType.IDEA
     status: str = "draft"
     priority: int = 3  # 1-5, 5 being highest
     author: Optional[str] = None
     project: Optional[str] = None
     experiment_id: Optional[str] = None
-    related_papers: List[str] = Field(default_factory=list)
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    related_papers: List[str] = field(default_factory=list)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
 
 class Note:
@@ -77,7 +78,35 @@ class Note:
         
         # Initialize frontmatter
         if frontmatter:
-            self.frontmatter = NoteFrontmatter(**frontmatter)
+            # Handle dict to dataclass conversion
+            if isinstance(frontmatter, dict):
+                # Convert string dates to datetime if present
+                if 'created' in frontmatter and isinstance(frontmatter['created'], str):
+                    try:
+                        frontmatter['created'] = datetime.fromisoformat(frontmatter['created'])
+                    except ValueError:
+                        frontmatter['created'] = datetime.now()
+                
+                if 'updated' in frontmatter and isinstance(frontmatter['updated'], str):
+                    try:
+                        frontmatter['updated'] = datetime.fromisoformat(frontmatter['updated'])
+                    except ValueError:
+                        frontmatter['updated'] = datetime.now()
+                
+                # Convert type string to enum if needed
+                if 'type' in frontmatter and isinstance(frontmatter['type'], str):
+                    try:
+                        frontmatter['type'] = NoteType(frontmatter['type'])
+                    except ValueError:
+                        frontmatter['type'] = note_type
+                
+                # Filter out unknown keys and create dataclass
+                valid_keys = {'title', 'created', 'updated', 'tags', 'type', 'status', 'priority', 'author', 'project', 'experiment_id', 'related_papers', 'metadata'}
+                filtered_frontmatter = {k: v for k, v in frontmatter.items() if k in valid_keys}
+                
+                self.frontmatter = NoteFrontmatter(title=title, type=note_type, **filtered_frontmatter)
+            else:
+                self.frontmatter = frontmatter
         else:
             self.frontmatter = NoteFrontmatter(
                 title=title,
@@ -124,7 +153,7 @@ class Note:
         if content.startswith("---\n"):
             try:
                 _, yaml_content, body = content.split("---\n", 2)
-                frontmatter = yaml.safe_load(yaml_content) or {}
+                frontmatter = safe_load(yaml_content) or {}
                 return frontmatter, body.strip()
             except ValueError:
                 pass
@@ -242,7 +271,7 @@ class Note:
                 frontmatter_dict[key] = value.value
         
         # Build markdown content
-        frontmatter_yaml = yaml.dump(frontmatter_dict, default_flow_style=False)
+        frontmatter_yaml = safe_dump(frontmatter_dict)
         
         markdown = f"---\n{frontmatter_yaml}---\n\n{self.content}"
         

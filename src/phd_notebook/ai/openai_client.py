@@ -5,7 +5,10 @@ OpenAI API client for ChatGPT and GPT-4 models.
 import asyncio
 import json
 from typing import Dict, List, Optional, Any
-import httpx
+try:
+    import httpx
+except ImportError:
+    httpx = None
 
 from .base_ai import BaseAI
 
