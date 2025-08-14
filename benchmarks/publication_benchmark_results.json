@@ -1,0 +1,131 @@
+{
+  "arxiv_publisher": {
+    "preparation": {
+      "time_ms": 0.03790855407714844,
+      "success": true,
+      "categories_set": true
+    },
+    "validation": {
+      "time_ms": 0.6194114685058594,
+      "is_valid": false,
+      "error_count": 1,
+      "validation_comprehensive": false
+    },
+    "submission_simulation": {
+      "time_ms": 0.07271766662597656,
+      "success": false,
+      "arxiv_id_generated": true,
+      "proper_response": false
+    },
+    "metadata_generation": {
+      "time_ms": 0.04291534423828125,
+      "metadata_length": 913,
+      "contains_required_fields": true
+    }
+  },
+  "citation_manager": {
+    "citation_addition": {
+      "time_ms": 0.07724761962890625,
+      "citations_added": 3,
+      "avg_time_per_citation": 0.02574920654296875
+    },
+    "formatting_performance": {
+      "apa": {
+        "time_ms": 0.16427040100097656,
+        "citations_formatted": 3,
+        "avg_length": 135.33333333333334,
+        "all_formatted": true
+      },
+      "ieee": {
+        "time_ms": 0.06031990051269531,
+        "citations_formatted": 3,
+        "avg_length": 141.0,
+        "all_formatted": true
+      },
+      "nature": {
+        "time_ms": 0.05221366882324219,
+        "citations_formatted": 3,
+        "avg_length": 131.33333333333334,
+        "all_formatted": true
+      }
+    },
+    "bibliography_generation": {
+      "time_ms": 0.06556510925292969,
+      "entries_generated": 3,
+      "proper_formatting": true
+    },
+    "search_functionality": {
+      "time_ms": 0.0064373016357421875,
+      "results_found": 3,
+      "search_accuracy": 3
+    },
+    "bibtex_parsing": {
+      "time_ms": 0.4265308380126953,
+      "parsing_success": true,
+      "parsed_correctly": true
+    },
+    "export_functionality": {
+      "time_ms": 0.019550323486328125,
+      "export_length": 714,
+      "contains_bibtex": true
+    }
+  },
+  "integration": {
+    "workflow_performance": {
+      "total_time_ms": 0.22482872009277344,
+      "submission_prepared": true,
+      "validation_passed": false,
+      "bibliography_generated": true,
+      "submission_successful": false
+    },
+    "integration_quality": {
+      "all_components_working": false,
+      "references_processed": 3,
+      "citations_in_manager": 3,
+      "workflow_complete": false
+    }
+  },
+  "stress_tests": {
+    "stress_tests": {
+      "large_dataset_addition": {
+        "citations_added": 1000,
+        "total_time_ms": 5.198240280151367,
+        "avg_time_per_citation_ms": 0.005198240280151367,
+        "citations_per_second": 192372.79273494473
+      },
+      "large_bibliography_generation": {
+        "entries_generated": 1000,
+        "time_ms": 15.369176864624023,
+        "entries_per_second": 65065.29326900703
+      },
+      "large_dataset_search": {
+        "search_time_ms": 0.31375885009765625,
+        "results_found": 1000,
+        "search_throughput": 3187161.094224924
+      },
+      "large_export": {
+        "export_time_ms": 12.421131134033203,
+        "export_size_kb": 272.873046875,
+        "export_rate_kb_per_sec": 21968.45391377788
+      }
+    }
+  },
+  "benchmark_summary": {
+    "total_execution_time_ms": 35.681962966918945,
+    "timestamp": "2025-08-14T13:43:01.687292",
+    "components_tested": 4,
+    "overall_performance": {
+      "overall_score": 4805.1175534265185,
+      "performance_ratios": {
+        "arxiv_preparation": 2637.927044025157,
+        "citation_formatting": 60.87523947750363,
+        "bibliography_generation": 7626.007272727273,
+        "large_dataset_search": 0.0,
+        "integration_workflow": 8895.66065747614
+      },
+      "meets_targets": true,
+      "target_achievements": 4,
+      "total_targets": 5
+    }
+  }
+}

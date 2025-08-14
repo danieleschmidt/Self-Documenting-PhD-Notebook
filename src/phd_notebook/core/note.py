@@ -8,9 +8,12 @@ from pathlib import Path
 from typing import Dict, List, Optional, Set, Union, Any
 from dataclasses import dataclass, field
 from enum import Enum
+from pydantic import BaseModel, Field
 
-from ..utils.yaml_fallback import safe_load, safe_dump, YAMLError
+from ..utils.yaml_fallback import safe_load, safe_dump, BasicYAMLError as YAMLError
 from ..utils.simple_validation import validate_note_data, ValidationError
+from ..utils.exceptions import NoteError, InvalidNoteFormatError, NoteFrontmatterError
+from ..monitoring.logging_setup import setup_logger
 
 
 class NoteType(str, Enum):
@@ -34,21 +37,20 @@ class Link:
     created_at: datetime = field(default_factory=datetime.now)
 
 
-@dataclass
-class NoteFrontmatter:
+class NoteFrontmatter(BaseModel):
     """Structured frontmatter for research notes."""
     title: str
-    created: datetime = field(default_factory=datetime.now)
-    updated: datetime = field(default_factory=datetime.now)
-    tags: List[str] = field(default_factory=list)
+    created: datetime = Field(default_factory=datetime.now)
+    updated: datetime = Field(default_factory=datetime.now)
+    tags: List[str] = Field(default_factory=list)
     type: NoteType = NoteType.IDEA
     status: str = "draft"
     priority: int = 3  # 1-5, 5 being highest
     author: Optional[str] = None
     project: Optional[str] = None
     experiment_id: Optional[str] = None
-    related_papers: List[str] = field(default_factory=list)
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    related_papers: List[str] = Field(default_factory=list)
+    metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
 class Note:
@@ -100,11 +102,25 @@ class Note:
                     except ValueError:
                         frontmatter['type'] = note_type
                 
+                # Handle metadata field - convert string to dict if needed
+                if 'metadata' in frontmatter and isinstance(frontmatter['metadata'], str):
+                    try:
+                        import json
+                        frontmatter['metadata'] = json.loads(frontmatter['metadata']) if frontmatter['metadata'] else {}
+                    except (json.JSONDecodeError, TypeError):
+                        frontmatter['metadata'] = {}
+                
                 # Filter out unknown keys and create dataclass
                 valid_keys = {'title', 'created', 'updated', 'tags', 'type', 'status', 'priority', 'author', 'project', 'experiment_id', 'related_papers', 'metadata'}
                 filtered_frontmatter = {k: v for k, v in frontmatter.items() if k in valid_keys}
                 
-                self.frontmatter = NoteFrontmatter(title=title, type=note_type, **filtered_frontmatter)
+                # Don't override title/type if they're already in frontmatter
+                if 'title' not in filtered_frontmatter:
+                    filtered_frontmatter['title'] = title
+                if 'type' not in filtered_frontmatter:
+                    filtered_frontmatter['type'] = note_type
+                
+                self.frontmatter = NoteFrontmatter(**filtered_frontmatter)
             else:
                 self.frontmatter = frontmatter
         else:
@@ -279,17 +295,47 @@ class Note:
     
     def save(self, file_path: Optional[Path] = None) -> None:
         """Save the note to a file."""
-        if file_path:
-            self.file_path = file_path
-        elif not self.file_path:
-            raise ValueError("No file path specified for saving note")
-            
-        # Ensure directory exists
-        self.file_path.parent.mkdir(parents=True, exist_ok=True)
+        logger = setup_logger(f"note.{self.title}")
         
-        # Write to file
-        markdown_content = self.to_markdown()
-        self.file_path.write_text(markdown_content, encoding="utf-8")
+        try:
+            if file_path:
+                self.file_path = file_path
+            elif not self.file_path:
+                error_msg = "No file path specified for saving note"
+                logger.error(error_msg, extra={'note_title': self.title})
+                raise NoteError(error_msg)
+            
+            logger.info(f"Saving note to {self.file_path}", extra={
+                'note_title': self.title,
+                'file_path': str(self.file_path),
+                'note_type': self.note_type.value
+            })
+            
+            # Ensure directory exists
+            try:
+                self.file_path.parent.mkdir(parents=True, exist_ok=True)
+            except OSError as e:
+                logger.error(f"Failed to create directory {self.file_path.parent}: {e}")
+                raise NoteError(f"Cannot create directory for note: {e}") from e
+            
+            # Write to file
+            markdown_content = self.to_markdown()
+            self.file_path.write_text(markdown_content, encoding="utf-8")
+            
+            # Update timestamp
+            self.frontmatter.updated = datetime.now()
+            
+            logger.info(f"Note saved successfully", extra={
+                'note_title': self.title,
+                'file_size': len(markdown_content)
+            })
+            
+        except Exception as e:
+            logger.error(f"Failed to save note: {e}", exc_info=True, extra={
+                'note_title': self.title,
+                'file_path': str(self.file_path) if self.file_path else None
+            })
+            raise NoteError(f"Failed to save note '{self.title}': {e}") from e
     
     def _update_timestamp(self) -> None:
         """Update the modified timestamp."""

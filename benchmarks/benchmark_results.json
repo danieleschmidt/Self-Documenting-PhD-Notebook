@@ -1,17 +1,17 @@
 {
   "knowledge_graph": {
     "embedding_generation": {
-      "time_per_paper_ms": 0.1019597053527832,
-      "total_time_ms": 10.19597053527832,
+      "time_per_paper_ms": 0.10249853134155273,
+      "total_time_ms": 10.249853134155273,
       "papers_processed": 100,
       "embedding_dimension": 256,
-      "avg_magnitude": 1.542017391194711
+      "avg_magnitude": 1.53414032799783
     },
     "attention_computation": {
-      "time_ms": 0.23794174194335938,
+      "time_ms": 0.2453327178955078,
       "source_targets": 10,
       "weights_sum": 1.0,
-      "max_weight": 0.11936693841764665
+      "max_weight": 0.10426103427491903
     },
     "validation": {
       "consistent_dimensions": true,
@@ -21,11 +21,11 @@
   },
   "literature_synthesis": {
     "size_10": {
-      "processing_time_ms": 14.456987380981445,
-      "papers_per_second": 691.7070435542655,
+      "processing_time_ms": 14.394283294677734,
+      "papers_per_second": 694.7202438135621,
       "clusters_found": 3,
-      "gaps_identified": 3,
-      "synthesis_length": 829,
+      "gaps_identified": 1,
+      "synthesis_length": 476,
       "quality_metrics": {
         "has_synthesis": true,
         "has_clusters": true,
@@ -34,11 +34,11 @@
       }
     },
     "size_25": {
-      "processing_time_ms": 79.27751541137695,
-      "papers_per_second": 315.34792520014196,
+      "processing_time_ms": 78.08256149291992,
+      "papers_per_second": 320.1739226019994,
       "clusters_found": 8,
       "gaps_identified": 10,
-      "synthesis_length": 911,
+      "synthesis_length": 907,
       "quality_metrics": {
         "has_synthesis": true,
         "has_clusters": true,
@@ -47,11 +47,11 @@
       }
     },
     "size_50": {
-      "processing_time_ms": 191.62464141845703,
-      "papers_per_second": 260.9267765872206,
+      "processing_time_ms": 186.8307590484619,
+      "papers_per_second": 267.62188546817674,
       "clusters_found": 10,
       "gaps_identified": 10,
-      "synthesis_length": 911,
+      "synthesis_length": 917,
       "quality_metrics": {
         "has_synthesis": true,
         "has_clusters": true,
@@ -60,11 +60,11 @@
       }
     },
     "size_100": {
-      "processing_time_ms": 358.6709499359131,
-      "papers_per_second": 278.8070793518903,
+      "processing_time_ms": 365.7801151275635,
+      "papers_per_second": 273.3882894785728,
       "clusters_found": 10,
       "gaps_identified": 10,
-      "synthesis_length": 916,
+      "synthesis_length": 924,
       "quality_metrics": {
         "has_synthesis": true,
         "has_clusters": true,
@@ -73,61 +73,61 @@
       }
     },
     "scalability": {
-      "scaling_factor": 2.4809522238897044,
+      "scaling_factor": 2.541148507635737,
       "is_linear": false,
       "performance_degradation": true
     }
   },
   "experimental_design": {
     "optimization_performance": {
-      "time_ms": 22.379636764526367,
+      "time_ms": 22.882699966430664,
       "generations": 50,
       "population_size": 50,
       "convergence_achieved": true
     },
     "solution_quality": {
-      "fitness_score": 0.92345517332066,
+      "fitness_score": 0.9205224558869551,
       "constraints_satisfied": true,
       "has_recommendations": true,
       "design_completeness": true
     },
     "optimal_design": {
-      "sample_size": 28,
-      "duration_weeks": 6,
-      "num_conditions": 2,
+      "sample_size": 70,
+      "duration_weeks": 7,
+      "num_conditions": 1,
       "measurement_frequency": "monthly",
       "control_group": true,
       "blinding": "double",
-      "randomization": "block",
-      "power": 0.9448505777355336,
-      "alpha": 0.001
+      "randomization": "stratified",
+      "power": 0.9350748529565175,
+      "alpha": 0.05
     }
   },
   "research_planning": {
     "planning_performance": {
-      "time_ms": 31.10980987548828,
+      "time_ms": 70.77479362487793,
       "opportunities_evaluated": 50,
       "pareto_solutions": 20,
       "optimization_iterations": 1000
     },
     "solution_quality": {
       "plan_size": 1,
-      "total_duration_months": 6,
+      "total_duration_months": 7,
       "constraints_satisfied": true,
       "has_analysis": true,
-      "pareto_front_diversity": 2
+      "pareto_front_diversity": 1
     },
     "plan_metrics": {
-      "avg_novelty": 0.9086017437931162,
-      "avg_impact": 0.8259134362493172,
-      "avg_feasibility": 0.8312922209505813
+      "avg_novelty": 0.6616067805252648,
+      "avg_impact": 0.7842656231340375,
+      "avg_feasibility": 0.8711493871642289
     }
   },
   "integration": {
     "integration_performance": {
-      "total_time_ms": 446.5827941894531,
+      "total_time_ms": 461.95077896118164,
       "components_executed": 3,
-      "avg_time_per_component_ms": 148.86093139648438
+      "avg_time_per_component_ms": 153.98359298706055
     },
     "workflow_completeness": {
       "literature_synthesis": true,
@@ -144,20 +144,20 @@
     }
   },
   "benchmark_summary": {
-    "total_execution_time_ms": 1157.4876308441162,
-    "timestamp": "2025-08-13T03:19:48.703380",
+    "total_execution_time_ms": 1214.322805404663,
+    "timestamp": "2025-08-14T13:42:53.299091",
     "test_data_size": {
       "papers": 200,
       "opportunities": 50
     },
     "overall_performance": {
-      "overall_score": 64.04202788897697,
+      "overall_score": 52.53387236062478,
       "performance_ratios": {
-        "kg_embedding_per_paper": 98.07796094937449,
-        "literature_synthesis_100_papers": 13.940353967594517,
-        "experimental_optimization": 89.36695537302779,
-        "research_planning": 96.43260476380246,
-        "integration_workflow": 22.3922643910856
+        "kg_embedding_per_paper": 97.56237352003907,
+        "literature_synthesis_100_papers": 13.669414473928638,
+        "experimental_optimization": 87.40227346135012,
+        "research_planning": 42.38797241713856,
+        "integration_workflow": 21.647327930667508
       },
       "meets_targets": true,
       "target_achievements": 5,
