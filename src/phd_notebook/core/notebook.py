@@ -3,6 +3,7 @@ Main ResearchNotebook class - the primary interface for the PhD notebook system.
 """
 
 import asyncio
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Union, Any
@@ -11,6 +12,8 @@ from .vault_manager import VaultManager, VaultConfig
 from .note import Note, NoteType
 from .knowledge_graph import KnowledgeGraph
 from ..agents.base import BaseAgent
+from ..utils.exceptions import NotebookError, VaultError, ConfigurationError
+from ..monitoring.logging_setup import setup_logger
 
 
 class ResearchNotebook:
@@ -34,20 +37,45 @@ class ResearchNotebook:
         expected_duration: int = 5,
         config: Optional[Dict] = None,
     ):
-        # Expand user path
-        self.vault_path = Path(vault_path).expanduser()
+        # Set up logging
+        self.logger = setup_logger(f"notebook.{self.__class__.__name__}")
+        self.logger.info("Initializing ResearchNotebook", extra={
+            'vault_path': str(vault_path),
+            'author': author,
+            'field': field
+        })
         
-        # Create vault configuration
-        vault_config = VaultConfig(
-            name=self.vault_path.name,
-            path=self.vault_path,
-            author=author,
-            institution=institution,
-            field=field,
-        )
-        
-        # Initialize core components
-        self.vault = VaultManager(self.vault_path, vault_config)
+        try:
+            # Validate inputs
+            if not author or not author.strip():
+                raise ConfigurationError("Author name is required")
+            
+            # Expand and validate vault path
+            self.vault_path = Path(vault_path).expanduser()
+            if not self.vault_path.parent.exists():
+                self.logger.error(f"Parent directory does not exist: {self.vault_path.parent}")
+                raise VaultError(f"Cannot create vault - parent directory does not exist: {self.vault_path.parent}")
+            
+            # Create vault configuration
+            vault_config = VaultConfig(
+                name=self.vault_path.name,
+                path=self.vault_path,
+                author=author.strip(),
+                institution=institution.strip() if institution else "",
+                field=field.strip() if field else "",
+            )
+            
+            # Initialize core components with error handling
+            try:
+                self.vault = VaultManager(self.vault_path, vault_config)
+                self.logger.info("Vault manager initialized successfully")
+            except Exception as e:
+                self.logger.error(f"Failed to initialize vault manager: {e}", exc_info=True)
+                raise VaultError(f"Failed to initialize vault: {e}") from e
+                
+        except Exception as e:
+            self.logger.error(f"Failed to initialize ResearchNotebook: {e}", exc_info=True)
+            raise NotebookError(f"Notebook initialization failed: {e}") from e
         self.knowledge_graph = KnowledgeGraph(self.vault)
         
         # Research context
@@ -73,6 +101,72 @@ class ResearchNotebook:
         
         # Configuration
         self.config = config or {}
+        
+        # Performance optimizations
+        try:
+            from ..performance.cache_manager import CacheManager
+            from ..performance.resource_monitor import ResourceMonitor
+            from ..performance.async_processing import AsyncTaskManager
+            
+            self.cache_manager = CacheManager()
+            # Create custom cache with desired settings if needed
+            if self.config.get('cache_size', 1000) != 1000:
+                self.cache_manager.create_cache(
+                    'main',
+                    'lru',
+                    max_size=self.config.get('cache_size', 1000),
+                    ttl=self.config.get('cache_ttl', 3600)
+                )
+            self.resource_monitor = ResourceMonitor(interval=self.config.get('monitor_interval', 30))
+            self.task_manager = AsyncTaskManager(
+                max_concurrent_tasks=self.config.get('max_concurrent_tasks', 10)
+            )
+            
+            # Start performance monitoring if enabled
+            if self.config.get('enable_monitoring', True):
+                self.resource_monitor.start_monitoring()
+                self.logger.info("Performance monitoring enabled")
+                
+        except ImportError as e:
+            self.logger.warning(f"Performance modules not available: {e}")
+            self.cache_manager = None
+            self.resource_monitor = None
+            self.task_manager = None
+        
+        # Global-first features: internationalization and compliance
+        try:
+            from ..internationalization.localization import get_localization_manager, SupportedLocale
+            from ..internationalization.compliance import ComplianceManager, PrivacyRegulation
+            from ..internationalization.regional_adapters import RegionalAdapter
+            
+            # Initialize localization based on config
+            self.localization = get_localization_manager()
+            locale_config = self.config.get('locale', 'en_US')
+            if locale_config in [locale.value for locale in SupportedLocale]:
+                self.localization.set_locale(SupportedLocale(locale_config))
+            
+            # Initialize compliance management
+            regulation_config = self.config.get('privacy_regulation', 'gdpr')
+            privacy_regulation = PrivacyRegulation.GDPR
+            if regulation_config in [reg.value for reg in PrivacyRegulation]:
+                privacy_regulation = PrivacyRegulation(regulation_config)
+            
+            self.compliance = ComplianceManager(privacy_regulation)
+            
+            # Initialize regional adapter
+            self.regional_adapter = RegionalAdapter()
+            
+            self.logger.info("Global-first features enabled", extra={
+                'locale': self.localization.current_locale.value,
+                'privacy_regulation': privacy_regulation.value,
+                'deployment_region': self.regional_adapter.target_region.value
+            })
+            
+        except ImportError as e:
+            self.logger.warning(f"Global features not available: {e}")
+            self.localization = None
+            self.compliance = None
+            self.regional_adapter = None
         
         print(f"✅ Research Notebook initialized at {self.vault_path}")
         print(f"📚 Field: {field} {f'({subfield})' if subfield else ''}")
@@ -111,6 +205,17 @@ class ResearchNotebook:
     
     def search_notes(self, query: str, **filters) -> List[Note]:
         """Search notes with various filters."""
+        # Generate cache key based on query and filters
+        cache_key = f"search:{hash((query, tuple(sorted(filters.items()))))}"
+        
+        # Check cache if available
+        if hasattr(self, 'cache_manager') and self.cache_manager:
+            cached_result = self.cache_manager.get_cache().get(cache_key)
+            if cached_result:
+                self.logger.debug(f"Cache hit for search query: {query}")
+                return cached_result
+        
+        # Perform search
         results = self.vault.search_notes(query)
         
         # Apply additional filters
@@ -128,6 +233,11 @@ class ResearchNotebook:
         if "date_range" in filters:
             # TODO: Implement date filtering
             pass
+        
+        # Cache the results
+        if hasattr(self, 'cache_manager') and self.cache_manager:
+            self.cache_manager.get_cache().set(cache_key, results, ttl=300)  # Cache for 5 minutes
+            self.logger.debug(f"Cached search results for query: {query}")
         
         return results
     

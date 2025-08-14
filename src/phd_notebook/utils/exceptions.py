@@ -8,6 +8,16 @@ class PhDNotebookError(Exception):
     pass
 
 
+class NotebookError(PhDNotebookError):
+    """Raised when notebook operations fail."""
+    pass
+
+
+class ConfigurationError(PhDNotebookError):
+    """Raised when configuration is invalid."""
+    pass
+
+
 class VaultError(PhDNotebookError):
     """Raised when vault operations fail."""
     pass
