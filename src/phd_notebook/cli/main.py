@@ -11,6 +11,7 @@ from ..core.note import NoteType
 from rich.console import Console
 from rich.table import Table
 from rich import print as rprint
+from .pipeline_cli import pipeline
 
 console = Console()
 
@@ -20,6 +21,10 @@ console = Console()
 def main():
     """Self-Documenting PhD Notebook - AI-powered research automation."""
     pass
+
+
+# Add pipeline commands
+main.add_command(pipeline)
 
 
 @main.command()
