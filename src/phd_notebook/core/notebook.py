@@ -194,10 +194,18 @@ class ResearchNotebook:
         # Update knowledge graph
         self.knowledge_graph.add_note(note)
         
+        # Set up callback for link updates
+        note._link_added_callback = self._on_link_added
+        
         # Trigger any automation workflows
         self._trigger_workflows("note_created", note=note)
         
         return note
+    
+    def _on_link_added(self, note: 'Note', link: 'Link') -> None:
+        """Callback when a link is added to a note - update knowledge graph."""
+        # Re-add the note to the knowledge graph to capture new links
+        self.knowledge_graph.add_note(note)
     
     def get_note(self, title: str) -> Optional[Note]:
         """Get a note by title."""

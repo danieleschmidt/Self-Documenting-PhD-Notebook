@@ -200,6 +200,10 @@ class Note:
             self.content += f"\n\n**Related**: [[{target}]]"
             
         self._update_timestamp()
+        
+        # Notify callback if set (for knowledge graph updates)
+        if hasattr(self, '_link_added_callback') and self._link_added_callback:
+            self._link_added_callback(self, link)
     
     def add_backlink(self, source: str, relationship: str = "relates_to") -> None:
         """Add a backlink from another note."""
