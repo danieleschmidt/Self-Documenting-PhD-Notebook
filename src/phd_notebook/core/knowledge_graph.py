@@ -110,8 +110,8 @@ class KnowledgeGraph:
         self.edges.append(edge)
         self.adjacency[source].add(target)
         
-        # For undirected relationships, add reverse edge
-        if relationship in ["relates_to", "similar_to", "connected_to"]:
+        # For undirected relationships or clustering purposes, add reverse edge
+        if relationship in ["relates_to", "similar_to", "connected_to", "subset_of", "part_of", "uses", "applies"]:
             self.adjacency[target].add(source)
     
     def get_connected_notes(self, note_title: str, max_depth: int = 2) -> List[str]:
@@ -147,7 +147,7 @@ class KnowledgeGraph:
         
         return connected_titles
     
-    def find_clusters(self, min_cluster_size: int = 3) -> Dict[str, List[str]]:
+    def find_clusters(self, min_cluster_size: int = 2) -> Dict[str, List[str]]:
         """Find clusters of related notes using simple connectivity."""
         if self._cluster_cache and self._is_cache_valid():
             return self._cluster_cache
