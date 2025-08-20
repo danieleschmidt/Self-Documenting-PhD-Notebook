@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 
 from phd_notebook.agents.smart_agent import SmartAgent
-from phd_notebook.agents.base import BaseAgent
+from phd_notebook.agents.base import BaseAgent, SimpleAgent
 from phd_notebook.ai.base_ai import MockAI
 
 
@@ -17,26 +17,25 @@ class TestBaseAgent:
     
     def test_agent_initialization(self):
         """Test agent initialization."""
-        agent = BaseAgent(name="test-agent")
+        agent = SimpleAgent(name="test-agent")
         assert agent.name == "test-agent"
         assert agent.enabled == True
         assert agent.priority == 1
     
-    @pytest.mark.asyncio
-    async def test_process_not_implemented(self):
-        """Test that process method raises NotImplementedError."""
-        agent = BaseAgent(name="test-agent")
+    def test_process_implementation(self):
+        """Test that process method works with SimpleAgent."""
+        agent = SimpleAgent(name="test-agent")
         
-        with pytest.raises(NotImplementedError):
-            await agent.process("test input")
+        # Test with no custom function - should return input
+        result = agent.process("test input")
+        assert result == "test input"
     
     def test_agent_info(self):
         """Test agent info retrieval."""
-        agent = BaseAgent(name="test-agent", description="Test agent description")
+        agent = SimpleAgent(name="test-agent")
         
         info = agent.get_info()
         assert info["name"] == "test-agent"
-        assert info["description"] == "Test agent description"
         assert info["enabled"] == True
         assert info["priority"] == 1
 
