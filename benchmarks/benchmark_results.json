@@ -1,17 +1,17 @@
 {
   "knowledge_graph": {
     "embedding_generation": {
-      "time_per_paper_ms": 0.10249853134155273,
-      "total_time_ms": 10.249853134155273,
+      "time_per_paper_ms": 0.10471582412719727,
+      "total_time_ms": 10.471582412719727,
       "papers_processed": 100,
       "embedding_dimension": 256,
-      "avg_magnitude": 1.53414032799783
+      "avg_magnitude": 1.5349071072688547
     },
     "attention_computation": {
-      "time_ms": 0.2453327178955078,
+      "time_ms": 0.22554397583007812,
       "source_targets": 10,
       "weights_sum": 1.0,
-      "max_weight": 0.10426103427491903
+      "max_weight": 0.12390820799134229
     },
     "validation": {
       "consistent_dimensions": true,
@@ -21,11 +21,11 @@
   },
   "literature_synthesis": {
     "size_10": {
-      "processing_time_ms": 14.394283294677734,
-      "papers_per_second": 694.7202438135621,
+      "processing_time_ms": 15.356063842773438,
+      "papers_per_second": 651.2085455222954,
       "clusters_found": 3,
-      "gaps_identified": 1,
-      "synthesis_length": 476,
+      "gaps_identified": 3,
+      "synthesis_length": 815,
       "quality_metrics": {
         "has_synthesis": true,
         "has_clusters": true,
@@ -34,11 +34,11 @@
       }
     },
     "size_25": {
-      "processing_time_ms": 78.08256149291992,
-      "papers_per_second": 320.1739226019994,
-      "clusters_found": 8,
-      "gaps_identified": 10,
-      "synthesis_length": 907,
+      "processing_time_ms": 87.48936653137207,
+      "papers_per_second": 285.7490114645585,
+      "clusters_found": 7,
+      "gaps_identified": 9,
+      "synthesis_length": 904,
       "quality_metrics": {
         "has_synthesis": true,
         "has_clusters": true,
@@ -47,8 +47,21 @@
       }
     },
     "size_50": {
-      "processing_time_ms": 186.8307590484619,
-      "papers_per_second": 267.62188546817674,
+      "processing_time_ms": 217.8201675415039,
+      "papers_per_second": 229.54715609826576,
+      "clusters_found": 10,
+      "gaps_identified": 10,
+      "synthesis_length": 910,
+      "quality_metrics": {
+        "has_synthesis": true,
+        "has_clusters": true,
+        "has_gaps": true,
+        "reasonable_clusters": true
+      }
+    },
+    "size_100": {
+      "processing_time_ms": 429.7027587890625,
+      "papers_per_second": 232.71900855793473,
       "clusters_found": 10,
       "gaps_identified": 10,
       "synthesis_length": 917,
@@ -59,75 +72,62 @@
         "reasonable_clusters": true
       }
     },
-    "size_100": {
-      "processing_time_ms": 365.7801151275635,
-      "papers_per_second": 273.3882894785728,
-      "clusters_found": 10,
-      "gaps_identified": 10,
-      "synthesis_length": 924,
-      "quality_metrics": {
-        "has_synthesis": true,
-        "has_clusters": true,
-        "has_gaps": true,
-        "reasonable_clusters": true
-      }
-    },
     "scalability": {
-      "scaling_factor": 2.541148507635737,
+      "scaling_factor": 2.798261085579431,
       "is_linear": false,
       "performance_degradation": true
     }
   },
   "experimental_design": {
     "optimization_performance": {
-      "time_ms": 22.882699966430664,
+      "time_ms": 23.29850196838379,
       "generations": 50,
       "population_size": 50,
       "convergence_achieved": true
     },
     "solution_quality": {
-      "fitness_score": 0.9205224558869551,
+      "fitness_score": 0.9248919941209435,
       "constraints_satisfied": true,
       "has_recommendations": true,
       "design_completeness": true
     },
     "optimal_design": {
-      "sample_size": 70,
-      "duration_weeks": 7,
+      "sample_size": 20,
+      "duration_weeks": 6,
       "num_conditions": 1,
       "measurement_frequency": "monthly",
       "control_group": true,
       "blinding": "double",
       "randomization": "stratified",
-      "power": 0.9350748529565175,
-      "alpha": 0.05
+      "power": 0.9496399804031449,
+      "alpha": 0.001
     }
   },
   "research_planning": {
     "planning_performance": {
-      "time_ms": 70.77479362487793,
+      "time_ms": 37.80531883239746,
       "opportunities_evaluated": 50,
       "pareto_solutions": 20,
       "optimization_iterations": 1000
     },
     "solution_quality": {
       "plan_size": 1,
-      "total_duration_months": 7,
+      "total_duration_months": 15,
       "constraints_satisfied": true,
       "has_analysis": true,
       "pareto_front_diversity": 1
     },
     "plan_metrics": {
-      "avg_novelty": 0.6616067805252648,
-      "avg_impact": 0.7842656231340375,
-      "avg_feasibility": 0.8711493871642289
+      "avg_novelty": 0.7967067028260904,
+      "avg_impact": 0.9068437678938243,
+      "avg_feasibility": 0.816865308210273
     }
   },
   "integration": {
     "integration_performance": {
-      "total_time_ms": 461.95077896118164,
+      "total_time_ms": 481.25529289245605,
       "components_executed": 3,
-      "avg_time_per_component_ms": 153.98359298706055
+      "avg_time_per_component_ms": 160.418430964152
     },
     "workflow_completeness": {
       "literature_synthesis": true,
@@ -144,20 +144,20 @@
     }
   },
   "benchmark_summary": {
-    "total_execution_time_ms": 1214.322805404663,
-    "timestamp": "2025-08-14T13:42:53.299091",
+    "total_execution_time_ms": 1306.877851486206,
+    "timestamp": "2025-08-20T23:00:59.959431",
     "test_data_size": {
       "papers": 200,
       "opportunities": 50
     },
     "overall_performance": {
-      "overall_score": 52.53387236062478,
+      "overall_score": 58.62156714875878,
       "performance_ratios": {
-        "kg_embedding_per_paper": 97.56237352003907,
-        "literature_synthesis_100_papers": 13.669414473928638,
-        "experimental_optimization": 87.40227346135012,
-        "research_planning": 42.38797241713856,
-        "integration_workflow": 21.647327930667508
+        "kg_embedding_per_paper": 95.49655062498577,
+        "literature_synthesis_100_papers": 11.635950427896736,
+        "experimental_optimization": 85.84242895590508,
+        "research_planning": 79.35391348767398,
+        "integration_workflow": 20.778992247332344
       },
       "meets_targets": true,
       "target_achievements": 5,

@@ -19,12 +19,15 @@ class BaseAgent(ABC):
     - Research workflow automation
     """
     
-    def __init__(self, name: str, capabilities: List[str] = None):
+    def __init__(self, name: str, capabilities: List[str] = None, enabled: bool = True, priority: int = 1, description: str = "", **kwargs):
         self.name = name
         self.capabilities = capabilities or []
         self.notebook = None  # Will be set when registered
         self.config: Dict[str, Any] = {}
         self.is_active = True
+        self.enabled = enabled
+        self.priority = priority
+        self.description = description
         
     @abstractmethod
     def process(self, input_data: Any, **kwargs) -> Any:
@@ -64,6 +67,18 @@ class BaseAgent(ABC):
             return {}
         
         return self.notebook.get_research_context()
+    
+    def get_info(self) -> Dict[str, Any]:
+        """Get agent information."""
+        return {
+            "name": self.name,
+            "description": self.description,
+            "capabilities": self.capabilities,
+            "enabled": self.enabled,
+            "priority": self.priority,
+            "active": self.is_active,
+            "config": self.config
+        }
     
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(name='{self.name}', capabilities={self.capabilities})"

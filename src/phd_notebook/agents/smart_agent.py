@@ -14,29 +14,36 @@ from ..core.note import Note, NoteType
 class SmartAgent(BaseAgent):
     """AI-powered agent for intelligent research tasks."""
     
-    def __init__(self, name: str, ai_provider: str = "auto", capabilities: List[str] = None):
+    def __init__(self, name: str, ai_provider: str = "auto", ai_client=None, capabilities: List[str] = None, **kwargs):
         default_capabilities = [
             'summarization', 'analysis', 'content_generation', 
             'tagging', 'linking', 'insight_extraction'
         ]
-        super().__init__(name, capabilities or default_capabilities)
+        super().__init__(name, capabilities or default_capabilities, **kwargs)
         
-        self.ai_client = AIClientFactory.get_client(ai_provider)
+        # Use provided client or create one
+        if ai_client:
+            self.ai_client = ai_client
+        else:
+            self.ai_client = AIClientFactory.get_client(ai_provider)
         
     async def process(self, input_data: Any, **kwargs) -> Any:
         """Process data using AI capabilities."""
         task_type = kwargs.get('task_type', 'analyze')
         
         if task_type == 'summarize':
-            return await self._summarize(input_data, **kwargs)
+            max_length = kwargs.get('max_length', 200)
+            return await self._summarize(input_data, max_length)
         elif task_type == 'analyze':
-            return await self._analyze(input_data, **kwargs)
+            analysis_type = kwargs.get('analysis_type', 'research')
+            return await self._analyze(input_data, analysis_type)
         elif task_type == 'generate_tags':
-            return await self._generate_tags(input_data, **kwargs)
+            max_tags = kwargs.get('max_tags', 5)
+            return await self._generate_tags(input_data, max_tags)
         elif task_type == 'suggest_links':
-            return await self._suggest_links(input_data, **kwargs)
+            return await self._suggest_links(input_data)
         else:
-            return await self.ai_client.generate(f"Process: {input_data}", **kwargs)
+            return await self.ai_client.generate_text(f"Process: {input_data}")
     
     async def _summarize(self, text: str, max_length: int = 200) -> str:
         """Generate intelligent summary."""

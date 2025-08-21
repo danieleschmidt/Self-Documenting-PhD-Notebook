@@ -23,55 +23,51 @@ class TestBaseWorkflow:
     
     def test_workflow_initialization(self):
         """Test workflow initialization."""
-        workflow = BaseWorkflow(name="test-workflow")
+        workflow = AutoTaggingWorkflow()
         
-        assert workflow.name == "test-workflow"
+        assert workflow.name == "auto_tagging"
         assert workflow.enabled == True
         assert workflow.priority == 1
-        assert workflow.description == ""
+        assert workflow.description == "Automatically generate and apply tags to notes"
         assert workflow.last_run is None
     
     def test_workflow_configuration(self):
         """Test workflow configuration."""
-        workflow = BaseWorkflow(
-            name="configured-workflow",
-            description="Test workflow description",
-            enabled=False,
-            priority=5
-        )
+        workflow = SmartLinkingWorkflow()
+        workflow.enabled = False
+        workflow.priority = 5
         
-        assert workflow.name == "configured-workflow"
-        assert workflow.description == "Test workflow description"
+        assert workflow.name == "smart_linking"
+        assert workflow.description == "Create intelligent links between related notes"
         assert workflow.enabled == False
         assert workflow.priority == 5
     
     @pytest.mark.asyncio
-    async def test_execute_not_implemented(self):
-        """Test that execute method raises NotImplementedError."""
-        workflow = BaseWorkflow(name="test-workflow")
+    async def test_execute_implementation(self):
+        """Test that execute method works with concrete workflow."""
+        workflow = AutoTaggingWorkflow()
         
-        with pytest.raises(NotImplementedError):
-            await workflow.execute()
+        # Should execute without errors (though may not do much without a notebook)
+        result = await workflow.execute()
+        assert isinstance(result, dict)
     
     def test_should_run_enabled_check(self):
         """Test should_run method with enabled/disabled workflows."""
-        enabled_workflow = BaseWorkflow(name="enabled", enabled=True)
-        disabled_workflow = BaseWorkflow(name="disabled", enabled=False)
+        enabled_workflow = AutoTaggingWorkflow()
+        disabled_workflow = SmartLinkingWorkflow()
+        disabled_workflow.enabled = False
         
         assert enabled_workflow.should_run() == True
         assert disabled_workflow.should_run() == False
     
     def test_workflow_info(self):
         """Test workflow info retrieval."""
-        workflow = BaseWorkflow(
-            name="info-test",
-            description="Info test workflow",
-            priority=3
-        )
+        workflow = DailyReviewWorkflow()
+        workflow.priority = 3
         
         info = workflow.get_info()
-        assert info["name"] == "info-test"
-        assert info["description"] == "Info test workflow"
+        assert info["name"] == "daily_review"
+        assert info["description"] == "Daily review and organization of notes"
         assert info["enabled"] == True
         assert info["priority"] == 3
         assert "last_run" in info

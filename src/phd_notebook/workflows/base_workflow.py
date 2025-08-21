@@ -17,11 +17,14 @@ from ..utils.exceptions import WorkflowError
 class BaseWorkflow(ABC):
     """Base class for automation workflows."""
     
-    def __init__(self, name: str, notebook=None, **config):
+    def __init__(self, name: str, notebook=None, description: str = "", enabled: bool = True, priority: int = 1, **config):
         self.name = name
         self.notebook = notebook
         self.config = config
-        self.is_active = False
+        self.description = description
+        self.enabled = enabled
+        self.priority = priority
+        self.is_active = enabled
         self.last_run = None
         self.run_count = 0
         self.logger = logging.getLogger(f"Workflow.{name}")
@@ -88,6 +91,23 @@ class BaseWorkflow(ABC):
             "run_count": self.run_count,
             "config": self.config
         }
+    
+    def get_info(self) -> Dict[str, Any]:
+        """Get workflow information."""
+        return {
+            "name": self.name,
+            "description": self.description,
+            "enabled": self.enabled,
+            "priority": self.priority,
+            "is_active": self.is_active,
+            "last_run": self.last_run,
+            "run_count": self.run_count,
+            "config": self.config
+        }
+    
+    def should_run(self) -> bool:
+        """Check if workflow should run (enabled check)."""
+        return self.enabled and self.is_active
 
 
 class WorkflowScheduler:
