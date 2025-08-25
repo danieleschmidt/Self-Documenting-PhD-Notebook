@@ -1,3 +1,4 @@
+from phd_notebook.utils.secure_execution_fixed import default_evaluator as safe_evaluator, default_executor as safe_executor
 #!/usr/bin/env python3
 """
 Security scan script for PhD notebook system.

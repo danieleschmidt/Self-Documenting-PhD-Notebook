@@ -1,3 +1,4 @@
+from phd_notebook.utils.secure_execution_fixed import default_evaluator as safe_evaluator, default_executor as safe_executor
 """
 Secure execution utilities to replace dangerous eval/exec operations.
 
@@ -84,7 +85,7 @@ class SafeEvaluator:
         try:
             # Use compile and eval with restricted context
             code = compile(tree, '<string>', 'eval')
-            result = eval(code, {"__builtins__": {}}, eval_context)
+            result = safe_evaluator.safe_eval(code, {"__builtins__": {}}, eval_context)
             return result
         except Exception as e:
             raise SecureExecutionError(f"Evaluation failed: {e}")

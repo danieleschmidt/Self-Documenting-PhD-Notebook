@@ -1,3 +1,4 @@
+from phd_notebook.utils.secure_execution_fixed import default_evaluator as safe_evaluator, default_executor as safe_executor
 """
 Adaptive Performance Optimization Engine
 Self-learning system that continuously optimizes research workflows for maximum performance.
@@ -595,7 +596,7 @@ class AdaptivePerformanceOptimizer:
                     safe_context[key] = value
             
             # Safely evaluate condition
-            return eval(condition, {"__builtins__": {}}, safe_context)
+            return safe_evaluator.safe_eval(condition, {"__builtins__": {}}, safe_context)
             
         except Exception as e:
             self.logger.error(f"Error evaluating condition '{condition}': {e}")

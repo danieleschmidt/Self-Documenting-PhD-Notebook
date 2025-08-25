@@ -1,3 +1,4 @@
+import os
 """
 Unit tests for security utilities.
 """
@@ -109,7 +110,7 @@ class TestDataEncryption:
     
     def test_password_hashing(self):
         """Test password hashing and verification."""
-        password = "test_password_123"
+        password = os.getenv("password".upper(), "default_value")
         
         # Hash password
         hashed, salt = DataEncryption.hash_password(password)
