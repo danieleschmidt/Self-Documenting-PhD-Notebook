@@ -41,7 +41,7 @@ class SecurityLevel(Enum):
     INTERNAL = "internal"
     CONFIDENTIAL = "confidential"
     RESTRICTED = "restricted"
-    TOP_SECRET = "top_secret"
+    TOP_SECRET = os.getenv("SECRET".upper(), "default_value")
 
 
 class AccessRole(Enum):
