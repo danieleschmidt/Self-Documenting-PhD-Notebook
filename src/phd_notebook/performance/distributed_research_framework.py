@@ -21,7 +21,7 @@ import multiprocessing as mp
 import queue
 
 from ..core.note import Note, NoteType
-from ..utils.logging import setup_logger
+from ..utils.logging import get_logger
 
 
 class TaskPriority(Enum):
@@ -172,7 +172,7 @@ class TaskScheduler:
         self.scheduling_policy = "priority_load_balance"  # priority_load_balance, round_robin, least_loaded
         self.max_queue_size = 10000
         
-        self.logger = setup_logger("distributed.scheduler")
+        self.logger = get_logger("distributed.scheduler")
     
     def add_node(self, node: ComputeNode):
         """Add a compute node to the cluster."""
@@ -486,7 +486,7 @@ class WorkerExecutor:
         self.task_handlers: Dict[str, Callable] = {}
         self.active_tasks: Dict[str, Any] = {}  # task_id -> future
         
-        self.logger = setup_logger(f"distributed.executor.{node.node_id}")
+        self.logger = get_logger(f"distributed.executor.{node.node_id}")
     
     def register_task_handler(self, operation: str, handler: Callable):
         """Register a task handler function."""
@@ -588,7 +588,7 @@ class DistributedResearchFramework:
     """
     
     def __init__(self, notebook_path: Path, node_id: str = None):
-        self.logger = setup_logger("distributed.framework")
+        self.logger = get_logger("distributed.framework")
         self.notebook_path = notebook_path
         
         # Node identification

@@ -15,7 +15,7 @@ import networkx as nx
 from collections import defaultdict, Counter
 
 from ..core.note import Note, NoteType
-from ..utils.logging import setup_logger
+from ..utils.logging import get_logger
 
 
 class CollaborationType(Enum):
@@ -218,7 +218,7 @@ class CollaborationEngine:
     """
     
     def __init__(self, notebook_path: Path):
-        self.logger = setup_logger("research.collaboration_engine")
+        self.logger = get_logger("research.collaboration_engine")
         self.notebook_path = notebook_path
         
         # Data stores

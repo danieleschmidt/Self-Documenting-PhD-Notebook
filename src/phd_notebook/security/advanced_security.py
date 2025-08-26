@@ -10,7 +10,7 @@ import logging
 import json
 import asyncio
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any, Union, Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path

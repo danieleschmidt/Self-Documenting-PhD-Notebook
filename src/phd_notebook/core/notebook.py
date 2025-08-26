@@ -13,7 +13,7 @@ from .note import Note, NoteType
 from .knowledge_graph import KnowledgeGraph
 from ..agents.base import BaseAgent
 from ..utils.exceptions import NotebookError, VaultError, ConfigurationError
-from ..monitoring.logging_setup import setup_logger
+from ..monitoring.logging_setup import get_logger
 
 
 class ResearchNotebook:
@@ -38,7 +38,7 @@ class ResearchNotebook:
         config: Optional[Dict] = None,
     ):
         # Set up logging
-        self.logger = setup_logger(f"notebook.{self.__class__.__name__}")
+        self.logger = get_logger(f"notebook.{self.__class__.__name__}")
         self.logger.info("Initializing ResearchNotebook", extra={
             'vault_path': str(vault_path),
             'author': author,

@@ -20,7 +20,7 @@ from ..core.note import Note, NoteType
 from ..research.hypothesis_testing_engine import HypothesisTestingEngine, HypothesisStatus
 from ..research.collaboration_engine import CollaborationEngine, CollaborationStatus
 from ..research.intelligent_paper_generator import IntelligentPaperGenerator, PaperStatus
-from ..utils.logging import setup_logger
+from ..utils.logging import get_logger
 
 
 class AlertLevel(Enum):
@@ -116,7 +116,7 @@ class AdvancedResearchMonitor:
     """
     
     def __init__(self, notebook_path: Path):
-        self.logger = setup_logger("monitoring.research_monitor")
+        self.logger = get_logger("monitoring.research_monitor")
         self.notebook_path = notebook_path
         
         # Core components (will be injected)

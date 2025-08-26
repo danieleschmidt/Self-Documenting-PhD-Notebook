@@ -103,6 +103,16 @@ class SecurityError(PhDNotebookError):
     pass
 
 
+class AuthenticationError(SecurityError):
+    """Raised when authentication fails."""
+    pass
+
+
+class AuthorizationError(SecurityError):
+    """Raised when authorization fails."""
+    pass
+
+
 class WorkflowError(PhDNotebookError):
     """Raised when workflow execution fails."""
     pass
@@ -130,4 +140,14 @@ class MetricsError(PhDNotebookError):
 
 class BackupError(PhDNotebookError):
     """Raised when backup operations fail."""
+    pass
+
+
+class DistributedComputingError(PhDNotebookError):
+    """Raised when distributed computing operations fail."""
+    pass
+
+
+class ResourceError(PhDNotebookError):
+    """Raised when resource allocation fails."""
     pass

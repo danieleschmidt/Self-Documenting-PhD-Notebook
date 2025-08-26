@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 from ..utils.yaml_fallback import safe_load, safe_dump, BasicYAMLError as YAMLError
 from ..utils.simple_validation import validate_note_data, ValidationError
 from ..utils.exceptions import NoteError, InvalidNoteFormatError, NoteFrontmatterError
-from ..monitoring.logging_setup import setup_logger
+from ..monitoring.logging_setup import get_logger
 
 
 class NoteType(str, Enum):
@@ -299,7 +299,7 @@ class Note:
     
     def save(self, file_path: Optional[Path] = None) -> None:
         """Save the note to a file."""
-        logger = setup_logger(f"note.{self.title}")
+        logger = get_logger(f"note.{self.title}")
         
         try:
             if file_path:

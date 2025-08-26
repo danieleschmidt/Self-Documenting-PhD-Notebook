@@ -9,7 +9,7 @@ import logging
 import traceback
 import inspect
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Callable, Type, Union
+from typing import Dict, List, Optional, Any, Callable, Type, Union, Tuple
 from dataclasses import dataclass, asdict
 from enum import Enum
 from pathlib import Path
@@ -19,7 +19,7 @@ import functools
 import threading
 from contextlib import contextmanager
 
-from ..utils.logging import setup_logger
+from ..utils.logging import get_logger
 
 
 class ErrorSeverity(Enum):
@@ -256,7 +256,7 @@ class IntelligentErrorRecovery:
     """
     
     def __init__(self, notebook_path: Path):
-        self.logger = setup_logger("core.error_recovery")
+        self.logger = get_logger("core.error_recovery")
         self.notebook_path = notebook_path
         
         # Error tracking
