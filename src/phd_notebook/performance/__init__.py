@@ -15,6 +15,30 @@ from .async_processing import (
 
 from .indexing import SearchIndex, get_search_index
 
+# Autonomous SDLC Generation 1 components
+try:
+    from .adaptive_research_optimizer import (
+        AdaptiveResearchOptimizer,
+        GeneticOptimizer,
+        PerformanceMetrics
+    )
+    _adaptive_optimizer_available = True
+except ImportError as e:
+    print(f"Warning: Adaptive research optimizer unavailable: {e}")
+    _adaptive_optimizer_available = False
+
+# Autonomous SDLC Generation 3 components  
+try:
+    from .quantum_performance_optimizer import (
+        QuantumPerformanceOptimizer,
+        ResourceController,
+        PerformancePredictor
+    )
+    _quantum_optimizer_available = True
+except ImportError as e:
+    print(f"Warning: Quantum performance optimizer unavailable: {e}")
+    _quantum_optimizer_available = False
+
 __all__ = [
     # Caching
     'LRUCache', 'AsyncCache', 'DiskCache', 'MultiLevelCache',
@@ -28,3 +52,18 @@ __all__ = [
     # Search indexing
     'SearchIndex', 'get_search_index'
 ]
+
+# Add autonomous performance components if available
+if _adaptive_optimizer_available:
+    __all__.extend([
+        'AdaptiveResearchOptimizer',
+        'GeneticOptimizer',
+        'PerformanceMetrics'
+    ])
+
+if _quantum_optimizer_available:
+    __all__.extend([
+        'QuantumPerformanceOptimizer',
+        'ResourceController',
+        'PerformancePredictor'
+    ])
