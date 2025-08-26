@@ -31,6 +31,20 @@ from .intelligent_paper_generator import (
     PaperStatus
 )
 
+# Autonomous SDLC Generation 1 components
+try:
+    from .autonomous_discovery_engine import (
+        AutonomousDiscoveryEngine,
+        HypothesisGenerator,
+        DiscoveryMode,
+        ResearchOpportunity,
+        DiscoveryHypothesis
+    )
+    _autonomous_discovery_available = True
+except ImportError as e:
+    print(f"Warning: Autonomous discovery engine unavailable: {e}")
+    _autonomous_discovery_available = False
+
 __all__ = [
     'HypothesisEngine',
     'ExperimentDesigner', 
@@ -55,3 +69,13 @@ __all__ = [
     'PaperTemplate',
     'PaperStatus'
 ]
+
+# Add autonomous components if available
+if _autonomous_discovery_available:
+    __all__.extend([
+        'AutonomousDiscoveryEngine',
+        'HypothesisGenerator', 
+        'DiscoveryMode',
+        'ResearchOpportunity',
+        'DiscoveryHypothesis'
+    ])
