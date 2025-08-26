@@ -16,7 +16,7 @@ from collections import defaultdict, Counter
 
 from ..core.note import Note, NoteType
 from ..agents.sparc_agent import SPARCAgent
-from ..utils.logging import setup_logger
+from ..utils.logging import get_logger
 
 
 class PaperSection(Enum):
@@ -178,7 +178,7 @@ class IntelligentPaperGenerator:
     """
     
     def __init__(self, notebook_path: Path, ai_client=None):
-        self.logger = setup_logger("research.paper_generator")
+        self.logger = get_logger("research.paper_generator")
         self.notebook_path = notebook_path
         self.ai_client = ai_client
         

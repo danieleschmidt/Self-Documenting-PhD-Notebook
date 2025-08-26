@@ -1,0 +1,41 @@
+{
+  "main": {
+    "id": "main",
+    "type": "split",
+    "children": [
+      {
+        "id": "sidebar-left",
+        "type": "split",
+        "children": [
+          {
+            "id": "file-explorer",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer"
+            }
+          }
+        ]
+      },
+      {
+        "id": "editor",
+        "type": "leaf",
+        "state": {
+          "type": "empty"
+        }
+      },
+      {
+        "id": "sidebar-right",
+        "type": "split",
+        "children": [
+          {
+            "id": "backlink",
+            "type": "leaf",
+            "state": {
+              "type": "backlink"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

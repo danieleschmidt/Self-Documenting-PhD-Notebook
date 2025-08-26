@@ -14,7 +14,7 @@ import statistics
 from pathlib import Path
 
 from ..core.note import Note, NoteType
-from ..utils.logging import setup_logger
+from ..utils.logging import get_logger
 
 
 class HypothesisStatus(Enum):
@@ -114,7 +114,7 @@ class HypothesisTestingEngine:
     """
     
     def __init__(self, notebook_path: Path):
-        self.logger = setup_logger("research.hypothesis_engine")
+        self.logger = get_logger("research.hypothesis_engine")
         self.notebook_path = notebook_path
         self.hypotheses: Dict[str, Hypothesis] = {}
         self.evidence_store: Dict[str, Evidence] = {}
@@ -679,7 +679,7 @@ class ResearchDrivenNotebook:
     def __init__(self, notebook_instance):
         self.notebook = notebook_instance
         self.hypothesis_engine = HypothesisTestingEngine(notebook_instance.vault_path)
-        self.logger = setup_logger("research.driven_notebook")
+        self.logger = get_logger("research.driven_notebook")
     
     def create_research_hypothesis(self, **kwargs) -> Hypothesis:
         """Create a new research hypothesis."""

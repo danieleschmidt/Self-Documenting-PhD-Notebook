@@ -41,7 +41,7 @@ class StructuredFormatter(logging.Formatter):
         return json.dumps(log_entry)
 
 
-def setup_logger(name: str) -> logging.Logger:
+def get_logger(name: str) -> logging.Logger:
     """Setup and return a configured logger instance."""
     # Ensure logging is setup
     setup_logging()

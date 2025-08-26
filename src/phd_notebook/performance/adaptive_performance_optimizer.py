@@ -1,4 +1,5 @@
-from phd_notebook.utils.secure_execution_fixed import default_evaluator as safe_evaluator, default_executor as safe_executor
+# Performance optimization without circular imports
+import logging
 """
 Adaptive Performance Optimization Engine
 Self-learning system that continuously optimizes research workflows for maximum performance.
@@ -20,7 +21,7 @@ import gc
 import sys
 
 from ..core.note import Note, NoteType
-from ..utils.logging import setup_logger
+from ..utils.logging import get_logger
 
 
 class OptimizationType(Enum):
@@ -308,7 +309,7 @@ class AdaptivePerformanceOptimizer:
     """
     
     def __init__(self, notebook_path: Path):
-        self.logger = setup_logger("performance.adaptive_optimizer")
+        self.logger = get_logger("performance.adaptive_optimizer")
         self.notebook_path = notebook_path
         
         # Core components
