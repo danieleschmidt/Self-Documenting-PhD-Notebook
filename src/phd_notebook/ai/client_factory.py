@@ -27,6 +27,16 @@ class AIClientFactory:
         return cls._clients[provider]
     
     @classmethod
+    def get_available_providers(cls) -> list:
+        """Return list of available provider names."""
+        providers = ["mock"]
+        if os.getenv("ANTHROPIC_API_KEY"):
+            providers.append("anthropic")
+        if os.getenv("OPENAI_API_KEY"):
+            providers.append("openai")
+        return providers
+
+    @classmethod
     def _detect_available_provider(cls) -> str:
         """Detect which AI provider is available based on environment variables."""
         if os.getenv("ANTHROPIC_API_KEY"):

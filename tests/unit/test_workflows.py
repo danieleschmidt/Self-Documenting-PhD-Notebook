@@ -166,10 +166,13 @@ class TestWorkflowManager:
             manager = WorkflowManager(notebook)
             
             initial_count = len(manager.workflows)
+
+            # Default workflows were already registered in __init__; idempotent re-call
             manager.register_default_workflows()
-            
-            # Should have registered some default workflows
-            assert len(manager.workflows) > initial_count
+
+            # Should still have at least the default workflows registered
+            assert len(manager.workflows) >= initial_count
+            assert initial_count > 0
 
 
 class MockWorkflow(BaseWorkflow):
@@ -183,10 +186,11 @@ class MockWorkflow(BaseWorkflow):
     async def execute(self, **kwargs):
         """Mock execute method."""
         self.execution_count += 1
-        
+        self.last_run = __import__('datetime').datetime.now()
+
         if self.should_fail:
             raise Exception(f"Mock workflow {self.name} failed")
-        
+
         return {"status": "success", "message": f"Mock workflow {self.name} executed"}
 
 

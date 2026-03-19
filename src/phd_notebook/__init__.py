@@ -15,7 +15,8 @@ from .core.notebook import ResearchNotebook
 from .core.note import Note, NoteType
 from .core.vault_manager import VaultManager
 from .connectors.base import DataConnector
-from .agents.smart_agent import SmartAgent, LiteratureAgent
+from .agents.literature_agent import LiteratureAgent
+from .agents.experiment_agent import ExperimentAgent
 from .workflows.automation import WorkflowManager
 from .ai.client_factory import AIClientFactory
 
@@ -26,8 +27,8 @@ __all__ = [
     "NoteType",
     "VaultManager",
     "DataConnector",
-    "SmartAgent",
-    "LiteratureAgent", 
+    "LiteratureAgent",
+    "ExperimentAgent",
     "WorkflowManager",
     "AIClientFactory",
 ]

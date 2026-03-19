@@ -8,7 +8,9 @@ from typing import Dict, List, Any, Callable, Optional
 from pathlib import Path
 
 from .base_workflow import BaseWorkflow
-from ..agents.smart_agent import SmartAgent, LiteratureAgent
+from ..agents.literature_agent import LiteratureAgent
+from ..agents.experiment_agent import ExperimentAgent
+from ..agents.smart_agent import SmartAgent
 from ..core.note import Note, NoteType
 
 

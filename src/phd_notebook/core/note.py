@@ -26,6 +26,7 @@ class NoteType(str, Enum):
     ANALYSIS = "analysis"
     METHODOLOGY = "methodology"
     OBSERVATION = "observation"
+    DAILY = "daily"
 
 
 @dataclass(frozen=True)

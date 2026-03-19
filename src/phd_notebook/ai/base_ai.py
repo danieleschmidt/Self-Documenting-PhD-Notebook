@@ -211,7 +211,7 @@ class MockAI(BaseAI):
         
         # Simple mock responses based on prompt content
         if "research question" in prompt.lower():
-            return "1. How can we improve model performance?\n2. What are the ethical implications?\n3. How does this scale to larger datasets?"
+            return "Research question 1: How can we improve model performance?\nResearch question 2: What are the ethical implications?\nResearch question 3: How does this scale to larger datasets?"
         elif "summarize" in prompt.lower() or "paper" in prompt.lower():
             return "This paper presents novel approaches to the research problem. The methodology involves comprehensive analysis. Key findings show significant improvements. Limitations include sample size constraints."
         elif "improve" in prompt.lower() and "writing" in prompt.lower():

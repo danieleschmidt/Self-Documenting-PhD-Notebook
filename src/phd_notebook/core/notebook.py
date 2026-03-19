@@ -133,40 +133,10 @@ class ResearchNotebook:
             self.resource_monitor = None
             self.task_manager = None
         
-        # Global-first features: internationalization and compliance
-        try:
-            from ..internationalization.localization import get_localization_manager, SupportedLocale
-            from ..internationalization.compliance import ComplianceManager, PrivacyRegulation
-            from ..internationalization.regional_adapters import RegionalAdapter
-            
-            # Initialize localization based on config
-            self.localization = get_localization_manager()
-            locale_config = self.config.get('locale', 'en_US')
-            if locale_config in [locale.value for locale in SupportedLocale]:
-                self.localization.set_locale(SupportedLocale(locale_config))
-            
-            # Initialize compliance management
-            regulation_config = self.config.get('privacy_regulation', 'gdpr')
-            privacy_regulation = PrivacyRegulation.GDPR
-            if regulation_config in [reg.value for reg in PrivacyRegulation]:
-                privacy_regulation = PrivacyRegulation(regulation_config)
-            
-            self.compliance = ComplianceManager(privacy_regulation)
-            
-            # Initialize regional adapter
-            self.regional_adapter = RegionalAdapter()
-            
-            self.logger.info("Global-first features enabled", extra={
-                'locale': self.localization.current_locale.value,
-                'privacy_regulation': privacy_regulation.value,
-                'deployment_region': self.regional_adapter.target_region.value
-            })
-            
-        except ImportError as e:
-            self.logger.warning(f"Global features not available: {e}")
-            self.localization = None
-            self.compliance = None
-            self.regional_adapter = None
+        # Localization stubs (removed Terragon internationalization layer)
+        self.localization = None
+        self.compliance = None
+        self.regional_adapter = None
         
         print(f"✅ Research Notebook initialized at {self.vault_path}")
         print(f"📚 Field: {field} {f'({subfield})' if subfield else ''}")
@@ -214,7 +184,10 @@ class ResearchNotebook:
     def search_notes(self, query: str, **filters) -> List[Note]:
         """Search notes with various filters."""
         # Generate cache key based on query and filters
-        cache_key = f"search:{hash((query, tuple(sorted(filters.items()))))}"
+        try:
+            cache_key = f"search:{hash((query, tuple(sorted((k, str(v)) for k, v in filters.items()))))}"
+        except TypeError:
+            cache_key = f"search:{query}"
         
         # Check cache if available
         if hasattr(self, 'cache_manager') and self.cache_manager:
@@ -234,9 +207,12 @@ class ResearchNotebook:
             results = [n for n in results if n.note_type == note_type]
         
         if "tags" in filters:
-            tag_filter = set(filters["tags"])
-            results = [n for n in results 
-                      if tag_filter.intersection(set(n.frontmatter.tags))]
+            # Normalize tags: treat "attention" and "#attention" as equivalent
+            def _normalize(t: str) -> str:
+                return t.lstrip("#").lower()
+            tag_filter = set(_normalize(t) for t in filters["tags"])
+            results = [n for n in results
+                       if tag_filter.intersection(set(_normalize(t) for t in n.frontmatter.tags))]
         
         if "date_range" in filters:
             # TODO: Implement date filtering

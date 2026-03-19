@@ -14,9 +14,9 @@ from ..utils.error_handling import handle_async_errors, error_handler
 from ..utils.exceptions import WorkflowError
 
 
-class BaseWorkflow(ABC):
+class BaseWorkflow:
     """Base class for automation workflows."""
-    
+
     def __init__(self, name: str, notebook=None, description: str = "", enabled: bool = True, priority: int = 1, **config):
         self.name = name
         self.notebook = notebook
@@ -27,12 +27,14 @@ class BaseWorkflow(ABC):
         self.is_active = enabled
         self.last_run = None
         self.run_count = 0
+        self.execution_count = 0
         self.logger = logging.getLogger(f"Workflow.{name}")
-        
-    @abstractmethod
-    async def execute(self, context: Dict[str, Any] = None) -> Dict[str, Any]:
-        """Execute the workflow."""
-        pass
+
+    async def execute(self, context: Dict[str, Any] = None, **kwargs) -> Dict[str, Any]:
+        """Execute the workflow. Override in subclasses."""
+        self.last_run = datetime.now()
+        self.execution_count += 1
+        return {"status": "success", "message": "No-op base workflow"}
     
     @handle_async_errors(severity="error")
     async def run(self, context: Dict[str, Any] = None) -> Dict[str, Any]:
@@ -50,6 +52,7 @@ class BaseWorkflow(ABC):
             # Update run statistics
             self.last_run = start_time
             self.run_count += 1
+            self.execution_count += 1
             
             duration = (datetime.now() - start_time).total_seconds()
             self.logger.info(f"Workflow {self.name} completed in {duration:.2f}s")
@@ -114,55 +117,76 @@ class WorkflowScheduler:
     """Scheduler for managing and running workflows."""
     
     def __init__(self):
-        self.workflows: Dict[str, BaseWorkflow] = {}
+        self.workflows: List[BaseWorkflow] = []
         self.scheduled_workflows: Dict[str, Any] = {}
         self.scheduler_thread = None
-        self.is_running = False
+        self.running = False
+        self.is_running = False  # alias
         self.logger = logging.getLogger("WorkflowScheduler")
         
+    def add_workflow(self, workflow: BaseWorkflow) -> None:
+        """Add a workflow to the scheduler (sorted by priority)."""
+        self.workflows.append(workflow)
+        self.workflows.sort(key=lambda w: w.priority)
+        self.logger.info(f"Added workflow: {workflow.name}")
+
     def register_workflow(self, workflow: BaseWorkflow) -> None:
-        """Register a workflow with the scheduler."""
-        self.workflows[workflow.name] = workflow
-        self.logger.info(f"Registered workflow: {workflow.name}")
-    
+        """Alias for add_workflow (backwards compat)."""
+        self.add_workflow(workflow)
+
+    def remove_workflow(self, name: str) -> None:
+        """Remove a workflow by name."""
+        self.workflows = [w for w in self.workflows if w.name != name]
+        self.scheduled_workflows.pop(name, None)
+        self.logger.info(f"Removed workflow: {name}")
+
+    def get_workflow(self, name: str) -> Optional[BaseWorkflow]:
+        """Get a workflow by name."""
+        for w in self.workflows:
+            if w.name == name:
+                return w
+        return None
+
+    def list_workflows(self, enabled_only: bool = False) -> List[BaseWorkflow]:
+        """List all registered workflows, optionally filtered by enabled state."""
+        if enabled_only:
+            return [w for w in self.workflows if getattr(w, 'enabled', True)]
+        return list(self.workflows)
+
     def schedule_workflow(
-        self, 
-        workflow_name: str, 
+        self,
+        workflow_name: str,
         schedule_type: str,
         **schedule_kwargs
     ) -> None:
         """Schedule a workflow to run automatically (simplified version)."""
-        if workflow_name not in self.workflows:
+        workflow = self.get_workflow(workflow_name)
+        if workflow is None:
             raise WorkflowError(f"Workflow {workflow_name} not registered")
-        
-        workflow = self.workflows[workflow_name]
-        
+
         # Store schedule info (but don't actually schedule with external library)
         self.scheduled_workflows[workflow_name] = {
             "schedule_type": schedule_type,
             "schedule_kwargs": schedule_kwargs,
             "job": None  # Simplified for now
         }
-        
+
         workflow.start()
         self.logger.info(f"Registered workflow {workflow_name} for {schedule_type} scheduling")
-    
+
     def unschedule_workflow(self, workflow_name: str) -> None:
         """Remove a workflow from the schedule."""
         if workflow_name in self.scheduled_workflows:
             del self.scheduled_workflows[workflow_name]
-            
-            if workflow_name in self.workflows:
-                self.workflows[workflow_name].stop()
-            
+            wf = self.get_workflow(workflow_name)
+            if wf:
+                wf.stop()
             self.logger.info(f"Unscheduled workflow: {workflow_name}")
-    
+
     def _run_workflow_sync(self, workflow_name: str) -> None:
         """Run workflow synchronously (for scheduler)."""
-        if workflow_name in self.workflows:
-            workflow = self.workflows[workflow_name]
-            
-            # Run async workflow in thread
+        workflow = self.get_workflow(workflow_name)
+        if workflow:
             def run_async():
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
@@ -171,21 +195,21 @@ class WorkflowScheduler:
                     self.logger.info(f"Scheduled run of {workflow_name}: {result['status']}")
                 finally:
                     loop.close()
-            
+
             thread = threading.Thread(target=run_async)
             thread.start()
             thread.join(timeout=300)  # 5 minute timeout
-    
+
     async def run_workflow_once(
-        self, 
-        workflow_name: str, 
+        self,
+        workflow_name: str,
         context: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Run a workflow once manually."""
-        if workflow_name not in self.workflows:
+        workflow = self.get_workflow(workflow_name)
+        if workflow is None:
             raise WorkflowError(f"Workflow {workflow_name} not registered")
-        
-        workflow = self.workflows[workflow_name]
+
         was_active = workflow.is_active
         
         # Temporarily activate if needed
@@ -222,8 +246,8 @@ class WorkflowScheduler:
             "registered_workflows": len(self.workflows),
             "scheduled_workflows": len(self.scheduled_workflows),
             "workflows": {
-                name: workflow.get_status() 
-                for name, workflow in self.workflows.items()
+                w.name: w.get_status()
+                for w in self.workflows
             },
             "schedules": {
                 name: {

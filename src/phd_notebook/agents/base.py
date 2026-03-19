@@ -2,7 +2,7 @@
 Base class for AI agents in the PhD notebook system.
 """
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Any, Dict, List, Optional, Union
 from datetime import datetime
 
@@ -29,10 +29,9 @@ class BaseAgent(ABC):
         self.priority = priority
         self.description = description
         
-    @abstractmethod
     def process(self, input_data: Any, **kwargs) -> Any:
-        """Process input data and return results."""
-        pass
+        """Process input data and return results. Override in subclasses."""
+        return input_data
     
     def setup(self, config: Dict[str, Any]) -> None:
         """Configure the agent with settings."""
